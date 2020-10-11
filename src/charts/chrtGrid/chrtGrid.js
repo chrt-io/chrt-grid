@@ -5,8 +5,8 @@ import lineWidth from './lib/lineWidth';
 import lineColor from './lib/lineColor';
 import lineStyle from './lib/lineStyle';
 import minor from './lib/minor';
-import {showTicks} from '../chrtAxis/lib';
-import chrtGeneric from '../chrtGeneric';
+import {showTicks} from './lib';
+import { chrtGeneric } from 'chrt-core';
 import {
   firstTick,
   lastTick,
