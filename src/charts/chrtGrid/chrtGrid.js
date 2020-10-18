@@ -47,20 +47,47 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
       return;
     }
 
-    const { _margins, width, height } = this.parentNode;
+    const { _margins, width, height, scales } = this.parentNode;
+    const isLog = scales[name].isLog();
+    console.log('GRID', scales[name].ticks(ticksNumber * 2))
+    const ticks = scales[name]
+      .ticks(ticksNumber * 2)
+      .map((tick, i , arr) => {
+        tick.position = scales[name](tick.value);
+        let visible =
+          tick.position >= _margins.top && tick.position <= (height - _margins.bottom);
+        visible = visible && (this.showMinorTicks || (tick.isZero && this.showZero) || !tick.isMinor);
+        visible = visible && ((!isLog) || (isLog && !tick.isMinor));
 
-    const ticks = this.parentNode.scales[name].ticks(
-      //ticksNumber * (this.showMinorTicks ? 2 : 1)
-      ticksNumber * 2
-    )
-    // .filter((tick, i, arr) => this.ticksFilter(tick.value, i, arr));
-    .filter((tick, i, arr) => this.ticksFilter ? this.ticksFilter(tick.value, i, arr) : true);
+        if(this.ticksFilter) {
+          visible = visible && this.ticksFilter(tick.value, i, arr);
+        }
+        tick.visible = visible;
 
-    // // console.log('got this ticks', name, ticksNumber, ticks);
+        tick.label = null;
+
+        if(tick.visible && this._label && this._label.tickIndex === -1) {
+          tick.label = this._label;
+          this._label.tickIndex = tick.index;
+        }
+
+        return tick;
+      })
+      // .filter(tick => tick.visible) // TO BE REVIEWED
+      // .filter((tick, i, arr) => this.ticksFilter ? this.ticksFilter(tick.value, i, arr) : true);
+
+    // const ticks = this.parentNode.scales[name].ticks(
+    //   //ticksNumber * (this.showMinorTicks ? 2 : 1)
+    //   ticksNumber * 2
+    // )
+    // // .filter((tick, i, arr) => this.ticksFilter(tick.value, i, arr));
+    // .filter((tick, i, arr) => this.ticksFilter ? this.ticksFilter(tick.value, i, arr) : true);
+
+    console.log('got this ticks', name, ticksNumber, ticks);
     this.g.setAttribute('id', `${name}Grid-${this.id()}`);
     this.g.querySelectorAll('line').forEach(gridLine => gridLine.setAttribute('toBeHidden', true));
 
-    ticks.forEach((tick, i, arr) => {
+    ticks.forEach((tick) => {
       let gridLine = this.g.querySelector(
         `[data-id='gridLine-${name}-${tick.value}']`
       );
@@ -85,34 +112,34 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
       const position = this.parentNode.scales[name](tick.value);
 
       if (name === 'x') {
-        const isLog = this.parentNode.scales[name].isLog();
-        const visible =
-          this.showMinorTicks || (!isLog && !tick.isMinor) || (isLog && !tick.isMinor); // TODO: improve this check
+        // const isLog = this.parentNode.scales[name].isLog();
+        // const visible =
+        //   this.showMinorTicks || (!isLog && !tick.isMinor) || (isLog && !tick.isMinor); // TODO: improve this check
         verticalGridLine(
           gridLine,
           position,
           height - _margins.bottom,
           _margins.top,
-          visible
+          tick.visible
         );
       }
       if (name === 'y') {
-        const isLog = this.parentNode.scales[name].isLog();
-        let visible =
-          position >= _margins.top && position <= height - _margins.bottom;
-        visible = visible && (this.showMinorTicks || (tick.isZero && this.showZero) || !tick.isMinor);
-        visible = visible && ((!isLog) || (isLog && !tick.isMinor));
+        // const isLog = this.parentNode.scales[name].isLog();
+        // let visible =
+        //   position >= _margins.top && position <= height - _margins.bottom;
+        // visible = visible && (this.showMinorTicks || (tick.isZero && this.showZero) || !tick.isMinor);
+        // visible = visible && ((!isLog) || (isLog && !tick.isMinor));
 
-        if(this.ticksFilter) {
-          visible = this.ticksFilter(tick.value, i, arr);
-        }
+        // if(this.ticksFilter) {
+        //   visible = this.ticksFilter(tick.value, i, arr);
+        // }
 
         horizontalGridLine(
           gridLine,
           position,
           _margins.left,
           width - _margins.right,
-          visible
+          tick.visible
         );
       }
     });
