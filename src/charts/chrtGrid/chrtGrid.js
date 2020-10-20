@@ -19,7 +19,7 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
   this.type = 'grid';
   // ticksNumber *= 2;
 
-  // // console.log('GRID', name, ticksNumber);
+  // console.log('GRID', name, ticksNumber);
 
   this.strokeWidth = DEFAULT_LINE_WIDTH;
   this.stroke = DEAULT_LINE_COLOR;
@@ -49,13 +49,16 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
 
     const { _margins, width, height, scales } = this.parentNode;
     const isLog = scales[name].isLog();
-    console.log('GRID', scales[name].ticks(ticksNumber * 2))
+    // console.log('GRID', scales[name].ticks(ticksNumber * 2))
     const ticks = scales[name]
       .ticks(ticksNumber * 2)
       .map((tick, i , arr) => {
         tick.position = scales[name](tick.value);
         let visible =
           tick.position >= _margins.top && tick.position <= (height - _margins.bottom);
+        if (name === 'x') {
+          visible = tick.position >= _margins.left && tick.position <= (width - _margins.right);
+        }
         visible = visible && (this.showMinorTicks || (tick.isZero && this.showZero) || !tick.isMinor);
         visible = visible && ((!isLog) || (isLog && !tick.isMinor));
 
@@ -63,13 +66,6 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
           visible = visible && this.ticksFilter(tick.value, i, arr);
         }
         tick.visible = visible;
-
-        tick.label = null;
-
-        if(tick.visible && this._label && this._label.tickIndex === -1) {
-          tick.label = this._label;
-          this._label.tickIndex = tick.index;
-        }
 
         return tick;
       })
