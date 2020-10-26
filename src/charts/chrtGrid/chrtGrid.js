@@ -100,6 +100,7 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
 
       gridLine.setAttribute('stroke', this.stroke);
       gridLine.setAttribute('stroke-width', this.strokeWidth);
+      gridLine.setAttribute('shape-rendering', 'crispEdges');
       if(!isNull(this.strokeStyle)) {
         gridLine.setAttribute('stroke-dasharray', this.strokeStyle);
       }
@@ -146,6 +147,7 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
   this.solid = () => lineStyle.call(this, 'solid');
   this.dashed = () => lineStyle.call(this, 'dashed');
   this.dotted = () => lineStyle.call(this, 'dotted');
+
 }
 
 chrtGrid.prototype = Object.create(chrtGeneric.prototype);
