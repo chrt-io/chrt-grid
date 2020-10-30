@@ -1,6 +1,6 @@
 {
   "name": "chrt-grid",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Grid component for Chrt",
   "main": "dist/chrt-grid.js",
   "module": "dist/chrt-grid.esm.js",
