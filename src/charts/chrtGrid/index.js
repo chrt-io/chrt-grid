@@ -1,10 +1,10 @@
 import chrtGrid from './chrtGrid';
 
-export function verticalGrid(name, ticksNumber) {
+export function verticalGrid(ticksNumber) {
   return chrtGrid.call(this, 'x', ticksNumber);
 }
 
-export function horizontalGrid(name, ticksNumber) {
+export function horizontalGrid(ticksNumber) {
   return chrtGrid.call(this, 'y', ticksNumber);
 }
 
