@@ -1,17 +1,11 @@
 import chrtGrid from './chrtGrid';
 
-export function verticalGrid(ticksNumber) {
-  chrtGrid.call(this, 'x', ticksNumber);
+export function verticalGrid(name, ticksNumber) {
+  return chrtGrid.call(this, 'x', ticksNumber);
 }
-horizontalGrid.prototype = Object.create(chrtGrid.prototype);
-horizontalGrid.prototype.constructor = horizontalGrid;
-horizontalGrid.parent = chrtGrid.prototype;
 
-export function horizontalGrid(ticksNumber) {
-  chrtGrid.call(this, 'y', ticksNumber);
+export function horizontalGrid(name, ticksNumber) {
+  return chrtGrid.call(this, 'y', ticksNumber);
 }
-verticalGrid.prototype = Object.create(chrtGrid.prototype);
-verticalGrid.prototype.constructor = verticalGrid;
-verticalGrid.parent = chrtGrid.prototype;
 
 export default chrtGrid;

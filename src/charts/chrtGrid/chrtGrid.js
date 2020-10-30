@@ -150,11 +150,16 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
 
 }
 
+function grid(name, ticksNumber) {
+  return new chrtGrid(name, ticksNumber);
+}
+
 chrtGrid.prototype = Object.create(chrtGeneric.prototype);
 chrtGrid.prototype.constructor = chrtGrid;
 chrtGrid.parent = chrtGeneric.prototype;
 
 chrtGrid.prototype = Object.assign(chrtGrid.prototype, {
+//chrtGrid.prototype = grid.prototype = {
   width: lineWidth,
   color: lineColor,
   minor,
@@ -163,4 +168,5 @@ chrtGrid.prototype = Object.assign(chrtGrid.prototype, {
   filter: showTicks,
 });
 
-export default chrtGrid;
+export default grid;
+// export default chrtGrid;
