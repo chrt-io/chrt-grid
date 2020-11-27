@@ -2,6 +2,8 @@ import { isNull } from '~/helpers';
 
 // showTicks and hideTicks can get different type of parameters and they filter the ticks based on the parameters
 export default function showTicks(filter) {
+  this._filter = filter;
+  
   // default true
   if (isNull(filter)) {
     this.ticksFilter = () => true;

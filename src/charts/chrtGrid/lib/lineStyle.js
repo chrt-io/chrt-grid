@@ -1,4 +1,5 @@
 export default function lineStyle(value) {
+  this._lineStyle = value;
   if(!value) {
     return this.strokeStyle;
   }
