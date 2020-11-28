@@ -20,7 +20,7 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
   // ticksNumber *= 2;
 
   // console.log('GRID', name, ticksNumber);
-
+  this.name = name;
   this.strokeWidth = DEFAULT_LINE_WIDTH;
   this.stroke = DEAULT_LINE_COLOR;
   this.showMinorTicks = false;
