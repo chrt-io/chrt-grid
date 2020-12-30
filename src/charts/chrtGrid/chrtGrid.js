@@ -14,13 +14,14 @@ import {
 const DEFAULT_LINE_WIDTH = 1;
 const DEAULT_LINE_COLOR = '#000';
 
-function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
+function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
   chrtGeneric.call(this);
   this.type = 'grid';
   // ticksNumber *= 2;
 
-  // console.log('GRID', name, ticksNumber);
-  this.name = name;
+  // console.log('GRID', type, ticksNumber, name);
+  this.type = type;
+  this.name = name ||type;
   this.strokeWidth = DEFAULT_LINE_WIDTH;
   this.stroke = DEAULT_LINE_COLOR;
   this.showMinorTicks = false;
@@ -43,20 +44,21 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
   };
 
   this.draw = () => {
-    if (!this.parentNode.scales[name]) {
+    if (!this.parentNode.scales[this.type][this.name]) {
       return;
     }
+    const _scale = this.parentNode.scales[this.type][this.name];
 
-    const { _margins, width, height, scales } = this.parentNode;
-    const isLog = scales[name].isLog();
-    // console.log('GRID', scales[name].ticks(ticksNumber * 2))
-    const ticks = scales[name]
+    const { _margins, width, height } = this.parentNode;
+    const isLog = _scale.isLog();
+    // console.log('GRID', scales[type].ticks(ticksNumber * 2))
+    const ticks = _scale
       .ticks(ticksNumber * 2)
       .map((tick, i , arr) => {
-        tick.position = scales[name](tick.value);
+        tick.position = _scale(tick.value);
         let visible =
           tick.position >= _margins.top && tick.position <= (height - _margins.bottom);
-        if (name === 'x') {
+        if (type === 'x') {
           visible = tick.position >= _margins.left && tick.position <= (width - _margins.right);
         }
         visible = visible && (this.showMinorTicks || (tick.isZero && this.showZero) || !tick.isMinor);
@@ -69,27 +71,29 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
 
         return tick;
       })
+
+    // console.log('GRID!', type, name, 'TICKS', ticks)
       // .filter(tick => tick.visible) // TO BE REVIEWED
       // .filter((tick, i, arr) => this.ticksFilter ? this.ticksFilter(tick.value, i, arr) : true);
 
-    // const ticks = this.parentNode.scales[name].ticks(
+    // const ticks = this.parentNode.scales[type].ticks(
     //   //ticksNumber * (this.showMinorTicks ? 2 : 1)
     //   ticksNumber * 2
     // )
     // // .filter((tick, i, arr) => this.ticksFilter(tick.value, i, arr));
     // .filter((tick, i, arr) => this.ticksFilter ? this.ticksFilter(tick.value, i, arr) : true);
 
-    // console.log('got this ticks', name, ticksNumber, ticks);
-    this.g.setAttribute('id', `${name}Grid-${this.id()}`);
+    // console.log('got this ticks', type, ticksNumber, ticks);
+    this.g.setAttribute('id', `${type}Grid-${this.id()}`);
     this.g.querySelectorAll('line').forEach(gridLine => gridLine.setAttribute('toBeHidden', true));
 
     ticks.forEach((tick) => {
       let gridLine = this.g.querySelector(
-        `[data-id='gridLine-${name}-${tick.value}']`
+        `[data-id='gridLine-${type}-${tick.value}']`
       );
       if (!gridLine) {
         gridLine = create('line');
-        gridLine.setAttribute('data-id', `gridLine-${name}-${tick.value}`);
+        gridLine.setAttribute('data-id', `gridLine-${type}-${tick.value}`);
 
         if (tick.isMinor) {
           gridLine.classList.add('tick-minor');
@@ -106,10 +110,10 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
       }
       gridLine.removeAttribute('toBeHidden');
 
-      const position = this.parentNode.scales[name](tick.value);
+      const position = _scale(tick.value);
 
-      if (name === 'x') {
-        // const isLog = this.parentNode.scales[name].isLog();
+      if (type === 'x') {
+        // const isLog = this.parentNode.scales[type][name].isLog();
         // const visible =
         //   this.showMinorTicks || (!isLog && !tick.isMinor) || (isLog && !tick.isMinor); // TODO: improve this check
         verticalGridLine(
@@ -120,8 +124,8 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
           tick.visible
         );
       }
-      if (name === 'y') {
-        // const isLog = this.parentNode.scales[name].isLog();
+      if (type === 'y') {
+        // const isLog = this.parentNode.scales[type][name].isLog();
         // let visible =
         //   position >= _margins.top && position <= height - _margins.bottom;
         // visible = visible && (this.showMinorTicks || (tick.isZero && this.showZero) || !tick.isMinor);
@@ -150,8 +154,8 @@ function chrtGrid(name, ticksNumber = TICKS_DEFAULT) {
 
 }
 
-function grid(name, ticksNumber) {
-  return new chrtGrid(name, ticksNumber);
+function grid(type, ticksNumber) {
+  return new chrtGrid(type, ticksNumber);
 }
 
 chrtGrid.prototype = Object.create(chrtGeneric.prototype);
