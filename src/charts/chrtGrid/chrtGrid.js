@@ -20,12 +20,13 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
   // ticksNumber *= 2;
 
   // console.log('GRID', type, ticksNumber, name);
-  this.type = type;
+  // this.type = type;
   this.name = name ||type;
   this.strokeWidth = DEFAULT_LINE_WIDTH;
   this.stroke = DEAULT_LINE_COLOR;
   this.showMinorTicks = false;
   this.ticksFilter = null;
+  this._interval = null;
 
   const verticalGridLine = (gridLine, position, y1, y2, visible = true) => {
     gridLine.style.display = visible ? 'block' : 'none';
@@ -44,16 +45,22 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
   };
 
   this.draw = () => {
-    if (!this.parentNode.scales[this.type][this.name]) {
+    if (!this.parentNode.scales[type][this.name]) {
       return;
     }
-    const _scale = this.parentNode.scales[this.type][this.name];
+    const _scale = this.parentNode.scales[type][this.name];
 
     const { _margins, width, height } = this.parentNode;
     const isLog = _scale.isLog();
-    // console.log('GRID', scales[type].ticks(ticksNumber * 2))
+
+    let interval = this._interval;
+    const axis = this.parentNode.getAxis(type);
+    if(axis) {
+      interval = axis.interval();
+    }
+
     const ticks = _scale
-      .ticks(ticksNumber * 2)
+      .ticks(ticksNumber * 2, interval)
       .map((tick, i , arr) => {
         tick.position = _scale(tick.value);
         let visible =
