@@ -6,7 +6,7 @@ import lineColor from './lib/lineColor';
 import lineStyle from './lib/lineStyle';
 import minor from './lib/minor';
 import {showTicks} from './lib';
-import { chrtGeneric } from 'chrt-core';
+import chrtGeneric from 'chrt-object';
 import {
   firstTick,
   lastTick,
