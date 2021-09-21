@@ -1,14 +1,17 @@
 import { isNull } from '~/helpers';
 
-// showTicks and hideTicks can get different type of parameters and they filter the ticks based on the parameters
-export default function showTicks(filter) {
-  this._filter = filter;
-  
-  // default true
-  if (isNull(filter)) {
-    this.ticksFilter = () => true;
-    return this;
+export default function ticks(ticks) {
+  if (isNull(ticks)) {
+    return this._ticks;
   }
+  this._fixedTicks = ticks;
+
+  return this;
+}
+
+// showTicks and hideTicks can get different type of parameters and they filter the ticks based on the parameters
+export function showTicks(filter = true) {
+  this._filter = filter;
 
   // filter-in with a function
   // showTicks((d,i) => !(i % 2))
@@ -52,29 +55,29 @@ export function hideTicks(filter) {
 
 export function firstTick(show = true) {
   // // console.log('FIRST TICK', this, show)
-  if(show) {
-    showTicks.call(this, (d,i) => i === 0);
+  if (show) {
+    showTicks.call(this, (d, i) => i === 0);
   } else {
-    hideTicks.call(this, (d,i) => i === 0);
+    hideTicks.call(this, (d, i) => i === 0);
   }
   return this;
 }
 
 export function lastTick(show = true) {
-  if(show) {
-    showTicks.call(this, (d,i,arr) => i === arr.length - 1);
+  if (show) {
+    showTicks.call(this, (d, i, arr) => i === arr.length - 1);
   } else {
-    hideTicks.call(this, (d,i,arr) => i === arr.length - 1);
+    hideTicks.call(this, (d, i, arr) => i === arr.length - 1);
   }
 
   return this;
 }
 
 export function firstAndLastTicks(show = true) {
-  if(show) {
-    showTicks.call(this, (d,i,arr) => i === 0 || i === arr.length - 1);
+  if (show) {
+    showTicks.call(this, (d, i, arr) => i === 0 || i === arr.length - 1);
   } else {
-    hideTicks.call(this, (d,i,arr) => i === 0 || i === arr.length - 1);
+    hideTicks.call(this, (d, i, arr) => i === 0 || i === arr.length - 1);
   }
 
   return this;

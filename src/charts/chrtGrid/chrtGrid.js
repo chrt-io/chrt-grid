@@ -1,16 +1,12 @@
 import { createSVG as create } from '~/layout';
 import { TICKS_DEFAULT } from '~/constants';
-import { isNull } from '~/helpers';
+import { isNull, getStrokeStyle } from '~/helpers';
 import lineWidth from './lib/lineWidth';
 import lineColor from './lib/lineColor';
 import lineStyle from './lib/lineStyle';
 import minor from './lib/minor';
-import {showTicks} from './lib';
+import { ticks, showTicks, firstTick, lastTick, hideTicks, firstAndLastTicks } from './lib';
 import chrtGeneric from 'chrt-object';
-import {
-  firstTick,
-  lastTick,
-} from './lib';
 const DEFAULT_LINE_WIDTH = 1;
 const DEAULT_LINE_COLOR = '#000';
 
@@ -21,9 +17,12 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
 
   // console.log('GRID', type, ticksNumber, name);
   // this.type = type;
-  this.name = name ||type;
-  this.strokeWidth = DEFAULT_LINE_WIDTH;
-  this.stroke = DEAULT_LINE_COLOR;
+  this.name = name || type;
+
+  this.attr('stroke', DEAULT_LINE_COLOR);
+  this.attr('strokeWidth', DEFAULT_LINE_WIDTH);
+  this.attr('strokeStyle', null);
+
   this.showMinorTicks = false;
   this.ticksFilter = null;
   this._interval = null;
@@ -55,33 +54,40 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
 
     let interval = this._interval;
     const axis = this.parentNode.getAxis(type);
-    if(axis) {
+    if (axis) {
       interval = axis.interval();
     }
 
     const ticks = _scale
-      .ticks(ticksNumber * 2, interval)
-      .map((tick, i , arr) => {
+      .ticks(this._fixedTicks || ticksNumber * 2, interval)
+      .map((tick, i, arr) => {
         tick.position = _scale(tick.value);
         let visible =
-          tick.position >= _margins.top && tick.position <= (height - _margins.bottom);
+          tick.position >= _margins.top &&
+          tick.position <= height - _margins.bottom;
         if (type === 'x') {
-          visible = tick.position >= _margins.left && tick.position <= (width - _margins.right);
+          visible =
+            tick.position >= _margins.left &&
+            tick.position <= width - _margins.right;
         }
-        visible = visible && (this.showMinorTicks || (tick.isZero && this.showZero) || !tick.isMinor);
-        visible = visible && ((!isLog) || (isLog && !tick.isMinor));
+        visible =
+          visible &&
+          (this.showMinorTicks ||
+            (tick.isZero && this.showZero) ||
+            !tick.isMinor);
+        visible = visible && (!isLog || (isLog && !tick.isMinor));
 
-        if(this.ticksFilter) {
+        if (this.ticksFilter) {
           visible = visible && this.ticksFilter(tick.value, i, arr);
         }
         tick.visible = visible;
 
         return tick;
-      })
+      });
 
     // console.log('GRID!', type, name, 'TICKS', ticks)
-      // .filter(tick => tick.visible) // TO BE REVIEWED
-      // .filter((tick, i, arr) => this.ticksFilter ? this.ticksFilter(tick.value, i, arr) : true);
+    // .filter(tick => tick.visible) // TO BE REVIEWED
+    // .filter((tick, i, arr) => this.ticksFilter ? this.ticksFilter(tick.value, i, arr) : true);
 
     // const ticks = this.parentNode.scales[type].ticks(
     //   //ticksNumber * (this.showMinorTicks ? 2 : 1)
@@ -92,9 +98,11 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
 
     // console.log('got this ticks', type, ticksNumber, ticks);
     this.g.setAttribute('id', `${type}Grid-${this.id()}`);
-    this.g.querySelectorAll('line').forEach(gridLine => gridLine.setAttribute('toBeHidden', true));
+    this.g
+      .querySelectorAll('line')
+      .forEach(gridLine => gridLine.setAttribute('toBeHidden', true));
 
-    ticks.forEach((tick) => {
+    ticks.forEach((tick, i, arr) => {
       let gridLine = this.g.querySelector(
         `[data-id='gridLine-${type}-${tick.value}']`
       );
@@ -109,11 +117,13 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
         this.g.appendChild(gridLine);
       }
 
-      gridLine.setAttribute('stroke', this.stroke);
-      gridLine.setAttribute('stroke-width', this.strokeWidth);
+      gridLine.setAttribute('stroke', this.attr('stroke')(tick, i, arr));
+      const strokeWidth = Math.max(this.attr('strokeWidth')(tick, i, arr), 0);
+      gridLine.setAttribute('stroke-width', strokeWidth);
       gridLine.setAttribute('shape-rendering', 'crispEdges');
-      if(!isNull(this.strokeStyle)) {
-        gridLine.setAttribute('stroke-dasharray', this.strokeStyle);
+      const strokeStyle = this.attr('strokeStyle')(tick, i, arr);
+      if (!isNull(strokeStyle)) {
+        gridLine.setAttribute('stroke-dasharray', getStrokeStyle(strokeStyle, strokeWidth));
       }
       gridLine.removeAttribute('toBeHidden');
 
@@ -151,14 +161,15 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
         );
       }
     });
-    this.g.querySelectorAll('line[toBeHidden=true]').forEach(gridLine => gridLine.remove());
+    this.g
+      .querySelectorAll('line[toBeHidden=true]')
+      .forEach(gridLine => gridLine.remove());
     return this.parentNode;
   };
 
   this.solid = () => lineStyle.call(this, 'solid');
   this.dashed = () => lineStyle.call(this, 'dashed');
   this.dotted = () => lineStyle.call(this, 'dotted');
-
 }
 
 function grid(type, ticksNumber) {
@@ -170,13 +181,16 @@ chrtGrid.prototype.constructor = chrtGrid;
 chrtGrid.parent = chrtGeneric.prototype;
 
 chrtGrid.prototype = Object.assign(chrtGrid.prototype, {
-//chrtGrid.prototype = grid.prototype = {
   width: lineWidth,
   color: lineColor,
   minor,
+  ticks,
   firstTick,
   lastTick,
   filter: showTicks,
+  showTicks,
+  hideTicks,
+  firstAndLastTicks,
 });
 
 export default grid;
