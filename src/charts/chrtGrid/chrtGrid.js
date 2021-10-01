@@ -23,6 +23,8 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
   this.attr('strokeWidth', DEFAULT_LINE_WIDTH);
   this.attr('strokeStyle', null);
 
+  this._classNames = ['chrt-grid', type === 'x' ? 'vertical-grid' : 'horizontal-grid'];
+
   this.showMinorTicks = false;
   this.ticksFilter = null;
   this._interval = null;
@@ -98,6 +100,7 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
 
     // console.log('got this ticks', type, ticksNumber, ticks);
     this.g.setAttribute('id', `${type}Grid-${this.id()}`);
+    this._classNames.forEach(d => this.g.classList.add(d));
     this.g
       .querySelectorAll('line')
       .forEach(gridLine => gridLine.setAttribute('toBeHidden', true));

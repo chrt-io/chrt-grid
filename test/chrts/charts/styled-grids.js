@@ -20,6 +20,7 @@ export default async function(container) {
         .width(2)
         .minor()
         .dotted()
+        .class('test')
     )
     .add(
       verticalGrid()
