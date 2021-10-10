@@ -6,12 +6,12 @@ import lineColor from './lib/lineColor';
 import lineStyle from './lib/lineStyle';
 import minor from './lib/minor';
 import { ticks, showTicks, firstTick, lastTick, hideTicks, firstAndLastTicks } from './lib';
-import chrtGeneric from 'chrt-object';
+import chrtObject from 'chrt-object';
 const DEFAULT_LINE_WIDTH = 1;
 const DEAULT_LINE_COLOR = '#000';
 
 function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
-  chrtGeneric.call(this);
+  chrtObject.call(this);
   this.type = 'grid';
   // ticksNumber *= 2;
 
@@ -179,9 +179,9 @@ function grid(type, ticksNumber) {
   return new chrtGrid(type, ticksNumber);
 }
 
-chrtGrid.prototype = Object.create(chrtGeneric.prototype);
+chrtGrid.prototype = Object.create(chrtObject.prototype);
 chrtGrid.prototype.constructor = chrtGrid;
-chrtGrid.parent = chrtGeneric.prototype;
+chrtGrid.parent = chrtObject.prototype;
 
 chrtGrid.prototype = Object.assign(chrtGrid.prototype, {
   width: lineWidth,
