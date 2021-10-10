@@ -2,8 +2,21 @@
   "name": "chrt-grid",
   "version": "0.0.20",
   "description": "Grid component for Chrt",
-  "main": "dist/chrt-grid.js",
+  "type": "module",
+  "main": "src/index.js",
   "module": "dist/chrt-grid.esm.js",
+  "jsdelivr": "dist/chrt-grid.min.js",
+  "unpkg": "dist/chrt-grid.min.js",
+  "exports": {
+    "umd": "./dist/chrt-grid.min.js",
+    "default": "./dist/chrt-grid.esm.js"
+  },
+  "keywords": [
+    "chrt",
+    "charts",
+    "grid",
+    "visualization"
+  ],
   "watch": {
     "build": {
       "patterns": [
@@ -18,7 +31,8 @@
     "build": "rollup -c",
     "lint": "eslint src --fix",
     "watch": "npm-watch",
-    "dev": "budo test/chrts/index.js:bundle.js --live --dir test/chrts  -- -t [ babelify --extensions .js ]"
+    "dev": "budo test/chrts/index.js:bundle.js --live --dir test/chrts  -- -t [ babelify --extensions .js --global true ]",
+    "prepare": "husky install"
   },
   "husky": {
     "hooks": {
