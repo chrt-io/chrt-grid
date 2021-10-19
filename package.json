@@ -1,6 +1,6 @@
 {
   "name": "chrt-grid",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Grid component for Chrt",
   "type": "module",
   "main": "src/index.js",
