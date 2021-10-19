@@ -1,6 +1,6 @@
-import { createSVG as create } from '~/layout';
-import { TICKS_DEFAULT } from '~/constants';
-import { isNull, getStrokeStyle } from '~/helpers';
+import { createSVG as create } from './layout';
+import { TICKS_DEFAULT } from './constants';
+import { isNull, getStrokeStyle } from './helpers';
 import lineWidth from './lib/lineWidth';
 import lineColor from './lib/lineColor';
 import lineStyle from './lib/lineStyle';

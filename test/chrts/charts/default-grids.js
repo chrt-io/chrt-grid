@@ -1,5 +1,5 @@
 import * as chrt from 'chrt';
-import { horizontalGrid, verticalGrid } from '~/'
+import { horizontalGrid, verticalGrid } from '../../../src/'
 
 const data = new Array(10).fill(1).map((d,i) => ({x: -5 + i, y: -5 + i}));
 
