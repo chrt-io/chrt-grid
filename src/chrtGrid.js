@@ -57,7 +57,7 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
     let interval = this._interval;
     const axis = this.parentNode.getAxis(type);
     if (axis) {
-      interval = axis.interval();
+      interval = axis.interval()();
     }
 
     const ticks = _scale
