@@ -1,12 +1,12 @@
-import { createSVG as create } from './layout';
 import { TICKS_DEFAULT } from './constants';
-import { isNull, getStrokeStyle } from './helpers';
 import lineWidth from './lib/lineWidth';
 import lineColor from './lib/lineColor';
 import lineStyle from './lib/lineStyle';
 import minor from './lib/minor';
 import { ticks, showTicks, firstTick, lastTick, hideTicks, firstAndLastTicks } from './lib';
-import chrtObject from 'chrt-object';
+import chrtObject, { utils } from 'chrt-object';
+const { isNull, getStrokeStyle, createSVG: create } = utils;
+
 const DEFAULT_LINE_WIDTH = 1;
 const DEAULT_LINE_COLOR = '#000';
 
@@ -100,7 +100,9 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
 
     // console.log('got this ticks', type, ticksNumber, ticks);
     this.g.setAttribute('id', `${type}Grid-${this.id()}`);
-    this._classNames.forEach(d => this.g.classList.add(d));
+    this.g.classList.remove(...this.g.classList)
+    this.g.classList.add(...this._classNames);
+
     this.g
       .querySelectorAll('line')
       .forEach(gridLine => gridLine.setAttribute('toBeHidden', true));
