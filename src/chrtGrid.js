@@ -4,7 +4,7 @@ import lineColor from './lib/lineColor';
 import lineStyle from './lib/lineStyle';
 import minor from './lib/minor';
 import { ticks, showTicks, firstTick, lastTick, hideTicks, firstAndLastTicks } from './lib';
-import chrtObject, { utils } from 'chrt-object';
+import chrtObject, { utils, cssDisplay } from 'chrt-object';
 const { isNull, getStrokeStyle, createSVG: create } = utils;
 
 const DEFAULT_LINE_WIDTH = 1;
@@ -49,6 +49,9 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
     if (!this.parentNode.scales[type][this.name]) {
       return;
     }
+
+    cssDisplay.call(this, this.attr('display')());
+
     const _scale = this.parentNode.scales[type][this.name];
 
     const { _margins, width, height } = this.parentNode;
