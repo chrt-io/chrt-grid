@@ -111,12 +111,13 @@ function chrtGrid(type, ticksNumber = TICKS_DEFAULT, name) {
       .forEach(gridLine => gridLine.setAttribute('toBeHidden', true));
 
     ticks.forEach((tick, i, arr) => {
+      const dataID = escape(`gridLine-${type}-${tick.value}`);
       let gridLine = this.g.querySelector(
-        `[data-id='gridLine-${type}-${tick.value}']`
+        `[data-id='${dataID}']`
       );
       if (!gridLine) {
         gridLine = create('line');
-        gridLine.setAttribute('data-id', `gridLine-${type}-${tick.value}`);
+        gridLine.setAttribute('data-id', dataID);
 
         if (tick.isMinor) {
           gridLine.classList.add('tick-minor');
