@@ -1,73 +1,210 @@
 # chrt-grid
-Grid component for XY axis for **chrt**
 
-## How to build
+Component for creating grid lines in chrt charts. The grid lines help readers to better understand the values in the chart by providing visual reference lines. Grid lines can be horizontal, vertical, or both, and can be customized in style, color, and frequency.
 
-###  Install the dependencies
-```
-npm install
-```
+The component provides two types of grid lines:
 
-###  Build the package
-```
-npm build
-```
-### Developing
-If you want to develop and see the changes reloaded live into another app you can use the watch script
-```
-npm run watch
-```
+- Vertical Grid Lines (`verticalGrid`) which align with x-axis ticks
+- Horizontal Grid Lines (`horizontalGrid`) which align with y-axis ticks
 
-## Use it as a module
+### Observable Examples and Documentation:
 
-### Method 1 - tgz package
+- [Chrt Grids - Observable](https://observablehq.com/d/b40a826f372020f5?collection=@chrt/chrt)
+- [Introducing Chrt - Observable](https://observablehq.com/@chrt/introducing-chrt?collection=@chrt/chrt)
 
-#### Use the tgz provided in the repository
-You can use the `chrt-grid-VERSION.tgz` package. The following commands will expand the chrt module in the `node_modules` folder of your project. Ready to be used with the usual `import` command:
-```
-cp chrt-grid-VERSION.tgz SOMEWHERE
-cd myproject
-npm install SOMEWHERE/chrt-grid-VERSION.tgz
+## Installing
+
+For use with Webpack, Rollup, or other Node-based bundlers, `chrt-grid` can be installed as a standalone module via a package manager such as Yarn or npm.
+
+```bash
+npm install chrt-grid chrt-core
 ```
 
-#### Create a tgz npm package
-You can create a package for testing with
-```
-npm pack
-```
-This command will create a file called `chrt-grid-VERSION.tgz` in the root folder of chrt.
+`chrt-grid` can be used as part of the `chrt` package:
 
-### Method 2 - symlinked package
-
-####  Create a global node module
-```
-npm link
-```
-This creates `chrt` module inside your global `node_modules` so that you can import it.
-
-####  Use the module in a different app
-```
-npm link chrt
-```
-This will create a sym link to the module created in your global.
-
-## Use it in your code
-After having installed or sym-linked the node you can use it as usual
-```
-import { horizontalGrid, verticalGrid } from 'chrt-grid';
+```bash
+npm install chrt
 ```
 
+## Usage
 
+### ES6 / Bundlers (Webpack, Rollup, etc.)
 
-## Testing
+```js
+import Chrt from "chrt-core";
+import { horizontalGrid, verticalGrid } from "chrt-grid";
 
-### Unit test with Jest
-Run `npm run test` to run all the tests on the code with Jest.
+// Create chart with both horizontal and vertical grid lines
+Chrt().data([1, 2, 3, 4, 5]).add(horizontalGrid()).add(verticalGrid());
 ```
-npm run test
+
+### Vanilla HTML
+
+```html
+<div id="chart"></div>
+
+<script type="module">
+  import Chrt from "https://cdn.skypack.dev/chrt-core";
+  import {
+    horizontalGrid,
+    verticalGrid,
+  } from "https://cdn.skypack.dev/chrt-grid";
+
+  const chart = Chrt()
+    .data([1, 2, 3, 4, 5])
+    .add(horizontalGrid())
+    .add(verticalGrid());
+
+  document.querySelector("#chart").appendChild(chart.node());
+</script>
 ```
 
-To run only one test:
+## API Reference
+
+### Grid Creation
+
+#### `horizontalGrid([tickCount[, name]])`
+
+Creates horizontal grid lines aligned with y-axis ticks.
+
+```js
+// Basic horizontal grid
+Chrt().add(horizontalGrid());
+
+// Horizontal grid with specific number of lines
+Chrt().add(horizontalGrid(5));
+
+// Horizontal grid with custom name (for multiple grids)
+Chrt().add(horizontalGrid(10, "customGrid"));
 ```
-npx jest test/scales/scaleLinear.test.js
+
+#### `verticalGrid([tickCount[, name]])`
+
+Creates vertical grid lines aligned with x-axis ticks.
+
+```js
+// Basic vertical grid
+Chrt().add(verticalGrid());
+
+// Vertical grid with specific number of lines
+Chrt().add(verticalGrid(5));
+```
+
+### Styling Methods
+
+#### `.color([value])` / `.width([value])`
+
+Set the color and width of grid lines.
+
+```js
+// Set fixed color and width
+horizontalGrid().color("#cccccc").width(1);
+
+// Color based on value
+verticalGrid().color((d) => (d.value > 0 ? "#ff0000" : "#00ff00"));
+```
+
+#### Line Styles
+
+Three preset line styles are available:
+
+```js
+// Solid lines (default)
+horizontalGrid().solid();
+
+// Dashed lines
+horizontalGrid().dashed();
+
+// Dotted lines
+horizontalGrid().dotted();
+```
+
+### Grid Line Control
+
+#### `.ticks([values])`
+
+Specify exact positions for grid lines.
+
+```js
+// Set specific grid line positions
+horizontalGrid().ticks([0, 25, 50, 75, 100]);
+
+// Set custom tick values
+verticalGrid().ticks([-5, 0, 5, 10]);
+```
+
+#### `.minor([show])`
+
+Show or hide minor grid lines.
+
+```js
+// Show minor grid lines
+horizontalGrid().minor(true);
+
+// Hide minor grid lines
+verticalGrid().minor(false);
+```
+
+#### Filtering Methods
+
+##### `.showTicks([filter])` / `.hideTicks([filter])`
+
+Control which grid lines are visible.
+
+```js
+// Show only specific values
+horizontalGrid().showTicks([0, 50, 100]);
+
+// Show grid lines based on a condition
+verticalGrid().showTicks((value) => value > 0);
+
+// Hide specific grid lines
+horizontalGrid().hideTicks([25, 75]);
+```
+
+##### `.firstTick([show])` / `.lastTick([show])`
+
+Control visibility of first and last grid lines.
+
+```js
+// Show only first grid line
+horizontalGrid().firstTick();
+
+// Show only last grid line
+verticalGrid().lastTick();
+```
+
+##### `.firstAndLastTicks([show])`
+
+Show or hide both first and last grid lines.
+
+```js
+// Show only first and last grid lines
+horizontalGrid().firstAndLastTicks();
+```
+
+### Complete Examples
+
+#### Basic Grid with Styling
+
+```js
+Chrt()
+  .data([1, 2, 3, 4, 5])
+  .add(horizontalGrid().color("#cccccc").width(1).dashed())
+  .add(verticalGrid().color("#eeeeee").width(1).dotted());
+```
+
+#### Complex Grid Configuration
+
+```js
+Chrt()
+  .data([1, 2, 3, 4, 5])
+  .add(
+    horizontalGrid()
+      .minor(true)
+      .color((d) => (d.value === 0 ? "#ff0000" : "#cccccc"))
+      .width((d) => (d.value === 0 ? 2 : 1))
+      .showTicks((value) => value % 2 === 0),
+  )
+  .add(verticalGrid().ticks([1, 2, 3, 4, 5]).dashed().firstAndLastTicks());
 ```
